@@ -1,4 +1,4 @@
-- 👋 Hi, I’m @rahmaye
+- 👋 Hi, I’m @Rahmaye
 - 👀 I’m interested in Data Science, UI/UX design, Software Development
 - 🌱 I’m currently learning Data Science in R
 - 💞️ I’m looking to collaborate on all of the above
