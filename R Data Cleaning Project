@@ -7,6 +7,7 @@ install.packages("tidyr")
 install.packages("ggplot2")
 install.packages("ggplot.multistats")
 install.packages("psych")
+install.packages("qqplotr")
 
 library(tidyr)
 library(readr)
@@ -14,6 +15,7 @@ library(dplyr)
 library(ggplot.multistats)
 library(ggplot2)
 library(psych)
+library(qqplotr)
 
 
 medical_raw_data <- read_csv("medical_raw_data.csv") #name and import data
@@ -45,12 +47,16 @@ medical.pca <- prcomp(medical, TRUE, TRUE) #medical = dataset True = centering v
 summary(medical.pca)
 #98% of the variation of the data is explained by component 1
 
-#build linear regression model to see relationship between readmission and other variables
+#build linear regression model to see relationship between complication risk and other variables
 y <- medical$Complication_risk #identify dependent variable
 medical.m <- lm (y~medical$Children + medical$Age + medical$Gender + medical$HighBlood
                   + medical$Overweight + medical$Anxiety + medical$Allergic_rhinitis
                  + medical$Reflux_esophagitis) #linear model 
 summary(medical.m)
+
+plot(medical.m) #plot linear model
+     
+
 
 #Only allergic_rhinitis is significant at the 0.01 significance level. This is the only 
 # variable that can be used as a determinant of complication_risk
