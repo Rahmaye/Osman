@@ -28,7 +28,7 @@ str(medical_raw_data)
 #delete columns not relevant 
 medical <- medical_raw_data[,c(2,7,12,13,15:45)] 
 
-#explore numerical columns containing NA values
+#explore columns containing NA values
 hist(medical$Children)
 hist(medical$Age)
 hist(medical$income)
@@ -47,7 +47,7 @@ medical$Anxiety[is.na(medical$Anxiety)]<-median(medical$Anxiety, na.rm=TRUE)
 medical$Initial_days[is.na(medical$Initial_days)]<-median(medical$Initial_days, na.rm=TRUE)
 
 
-#explore numerical columns after NA values are imputed
+#explore columns after NA values are imputed
 hist(medical$Children)
 hist(medical$Age)
 hist(medical$income)
