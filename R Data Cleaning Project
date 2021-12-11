@@ -5,65 +5,88 @@ install.packages("dplyr") # a grammar of data manipulation
 install.packages("tidyr") # Tidy messy Data
 install.packages("ggplot2") # create elegant data visualizations
 install.packages("psych") # a package for procedures for research
+install.packages("modeest") # provides estimators of the mode
 
-
+# add packages to library
 library(tidyr)
 library(readr)
 library(dplyr)
 library(ggplot2)
 library(psych)
+library(modeest)
 
+#name and import raw data file
+medical_raw_data <- read_csv("medical_raw_data.csv") 
 
-medical_raw_data <- read_csv("medical_raw_data.csv") #name and import data
-
+#view medical_raw_data file
 View(medical_raw_data)
 
-str(medical_raw_data) # explore the data set by viewing the number of rows and 
+# explore the data set by viewing the number of rows and 
 #columns, data types, etc.
+str(medical_raw_data) 
 
-medical <- medical_raw_data[,c(2,7,12,13,15:45)] #delete columns not relevant 
+#delete columns not relevant 
+medical <- medical_raw_data[,c(2,7,12,13,15:45)] 
 
-
+#explore numerical columns containing NA values
+hist(medical$Children)
 hist(medical$Age)
+hist(medical$income)
+hist(medical$Soft_drink)
+hist(medical$overweight)
+hist(medical$anxiety)
+hist(medical$Initial_days)
 
-numericNA <- function(na) {mean(na, na.rm = TRUE)} #Create function to handle all NAs for numeric columns
-numericNAColumns <- data.frame(sapply(medical[,c(3,6,7,10,14:17,23,28,33:35)], numericNA)) #apply function to all numeric columns
-is.na(medical[,c(3,6,7,10,14:17,23,28,33:35)]) <- numericNAColumns #replace NAs in numeric columns
-
-medical$Children[is.na(medical$Children)]<-mean(medical$Children, na.rm=TRUE)
+#impute NA values using the median and mode
+medical$Children[is.na(medical$Children)]<-median(medical$Children, na.rm=TRUE)
 medical$Age[is.na(medical$Age)]<-median(medical$Age, na.rm=TRUE)
-medical$Gender[is.na(medical$Gender)]<-mean(medical$Gender, na.rm=TRUE)
-medical$HighBlood[is.na(medical$HighBlood)]<-mean(medical$HighBlood, na.rm=TRUE)
-medical$Complication_risk[is.na(medical$Complication_risk)]<-mean(medical$Complication_risk, na.rm=TRUE)
-medical$Overweight[is.na(medical$Overweight)]<-mean(medical$Overweight, na.rm=TRUE)
-medical$Anxiety[is.na(medical$Anxiety)]<-mean(medical$Anxiety, na.rm=TRUE)
-medical$Allergic_rhinitis[is.na(medical$Allergic_rhinitis)]<-mean(medical$Allergic_rhinitis, na.rm=TRUE)
-medical$Reflux_esophagitis[is.na(medical$Reflux_esophagitis)]<-mean(medical$Reflux_esophagitis, na.rm=TRUE)
+medical$Income[is.na(medical$Income)]<-median(medical$Income, na.rm=TRUE)
+medical$Soft_drink[is.na(medical$Soft_drink)]<-mfv(medical$Soft_drink, na_rm = TRUE)
+medical$Overweight[is.na(medical$Overweight)]<-median(medical$Overweight, na.rm=TRUE)
+medical$Anxiety[is.na(medical$Anxiety)]<-median(medical$Anxiety, na.rm=TRUE)
+medical$Initial_days[is.na(medical$Initial_days)]<-median(medical$Initial_days, na.rm=TRUE)
 
+
+#explore numerical columns after NA values are imputed
+hist(medical$Children)
 hist(medical$Age)
-#PCA - look at PCA for all x variables. 
+hist(medical$income)
+hist(medical$Soft_drink)
+hist(medical$overweight)
+hist(medical$anxiety)
+hist(medical$Initial_days)
 
+#create function to change categorical columns to numeric
+factorfunction <- function(x) {as.numeric(as.factor(x))} 
+
+#apply function created above to all categorical columns
+factoredColumns <- sapply(medical[,c(2,4,8,9,11:13,18:21,22,24:27,29:32)], factorfunction) 
+
+#replace categorical columns with factored column
+medical[,c(2,4,8,9,11:13,18:21,22,24:27,29:32)] <- factoredColumns 
+
+#delete additional columns not needed
+medical <- medical[,c(-1,-5)]
+
+
+#boxplot function to detect outliers
+b <- boxplot(medical$Children)
+b <- boxplot(medical$Age)
+b <- boxplot(medical$Income)
+b <- boxplot(medical$Soft_drink)
+b <- boxplot(medical$Overweight)
+b <- boxplot(medical$Anxiety)
+b <- boxplot(medical$Initial_days)
+
+
+#PCA - look at PCA for all x variables. 
 medical.pca <- prcomp(medical, TRUE, TRUE) #medical = dataset True = centering variables relative
 #to dataset 
 # True 2: standardizes the input data so that there is zero mean and variance in the data
 
-summary(medical.pca)
+#print summary of above PCA function
+summary(medical.pca) 
 
-#build linear regression model to see relationship between complication risk and other variables
 
-y <- medical$Complication_risk #identify dependent variable
-
-medical.m <- lm (y~medical$Children + medical$Age + medical$Gender + medical$HighBlood
-                  + medical$Overweight + medical$Anxiety + medical$Allergic_rhinitis
-                 + medical$Reflux_esophagitis) #linear model: y~ designates an equation between
-                  #dependent and independent variables. 
-
-summary(medical.m)
-
-plot(y ~ medical$Allergic_rhinitis)
-
-#Only allergic_rhinitis is significant at the 0.01 significance level. This is the only 
-# variable that can be used as a determinant of complication_risk
-
-write_csv(medical,"Users/rahmoosman/Desktop/final medical dataset.csv", append = FALSE,) #Write final dataset to csv file.
-
+#Write final dataset to csv file.
+write_csv(medical,"Users/rahmoosman/Desktop/final medical dataset.csv", append = FALSE,) 
