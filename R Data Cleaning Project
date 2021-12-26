@@ -1,11 +1,14 @@
 #install packages used in data cleaning and analysis
 
-install.packages("readr") # read rectangular text data
-install.packages("dplyr") # a grammar of data manipulation
-install.packages("tidyr") # Tidy messy Data
-install.packages("ggplot2") # create elegant data visualizations
-install.packages("psych") # a package for procedures for research
-install.packages("modeest") # provides estimators of the mode
+install.packages("readr") #read rectangular text data
+install.packages("dplyr") #a grammar of data manipulation
+install.packages("tidyr") #Tidy messy Data
+install.packages("ggplot2") #create elegant data visualizations
+install.packages("psych") #a package for procedures for research
+install.packages("modeest") #provides estimators of the mode
+install.packages("visdat") #makes it easy to visualize whole data sets
+install.packages("factoextra") #Print method for an object 
+install.packages("ggstatsplot")#creates graphics with details from stat tests 
 
 # add packages to library
 library(tidyr)
@@ -14,79 +17,117 @@ library(dplyr)
 library(ggplot2)
 library(psych)
 library(modeest)
+library(visdat)
+library(factoextra)
+library(ggstatsplot)
 
-#name and import raw data file
-medical_raw_data <- read_csv("medical_raw_data.csv") 
 
-#view medical_raw_data file
-View(medical_raw_data)
 
-# explore the data set by viewing the number of rows and 
-#columns, data types, etc.
-str(medical_raw_data) 
+medical_raw_data <- read_csv("medical_raw_data.csv") #name and import raw data file
 
-#delete columns not relevant 
-medical <- medical_raw_data[,c(2,7,12,13,15:45)] 
+
+View(medical_raw_data) #view medical_raw_data file
+
+
+str(medical_raw_data) # explore the data set by viewing the number of rows and columns, data types, etc.
+
+
+medical <- medical_raw_data[,c(1,12:13,16:42)] #delete columns not relevant 
 
 #explore columns containing NA values
-hist(medical$Children)
-hist(medical$Age)
-hist(medical$income)
-hist(medical$Soft_drink)
-hist(medical$overweight)
-hist(medical$anxiety)
-hist(medical$Initial_days)
+hist(medical$Children,
+     main = "Histogram for Children",
+     xlab = "Children",
+     border = "green",
+     col = "blue") 
+hist(medical$Age,
+     main = "Histogram for Age",
+     xlab = "Age",
+     border = "green",
+     col = "blue")
+hist(medical$Income,
+     main = "Histogram for Income",
+     xlab = "Income",
+     border = "green",
+     col = "blue")
+hist(medical$Overweight,
+     main = "Histogram for Overweight",
+     xlab = "Overweight",
+     border = "green",
+     col = "blue")
+hist(medical$Anxiety,
+     main = "Histogram for Anxiety",
+     xlab = "Anxiety",
+     border = "green",
+     col = "blue")
+ggplot(medical, aes(x = factor(Soft_drink))) +
+  geom_bar()
 
-#impute NA values using the median and mode
-medical$Children[is.na(medical$Children)]<-median(medical$Children, na.rm=TRUE)
+
+medical$Children[is.na(medical$Children)]<-median(medical$Children, na.rm=TRUE) #impute NA values using the median and mode
 medical$Age[is.na(medical$Age)]<-median(medical$Age, na.rm=TRUE)
 medical$Income[is.na(medical$Income)]<-median(medical$Income, na.rm=TRUE)
-medical$Soft_drink[is.na(medical$Soft_drink)]<-mfv(medical$Soft_drink, na_rm = TRUE)
 medical$Overweight[is.na(medical$Overweight)]<-median(medical$Overweight, na.rm=TRUE)
 medical$Anxiety[is.na(medical$Anxiety)]<-median(medical$Anxiety, na.rm=TRUE)
-medical$Initial_days[is.na(medical$Initial_days)]<-median(medical$Initial_days, na.rm=TRUE)
+medical$Soft_drink[is.na(medical$Soft_drink)]<-mfv(medical$Soft_drink, na_rm = TRUE)
 
 
 #explore columns after NA values are imputed
-hist(medical$Children)
-hist(medical$Age)
-hist(medical$income)
-hist(medical$Soft_drink)
-hist(medical$overweight)
-hist(medical$anxiety)
-hist(medical$Initial_days)
-
-#create function to change categorical columns to numeric
-factorfunction <- function(x) {as.numeric(as.factor(x))} 
-
-#apply function created above to all categorical columns
-factoredColumns <- sapply(medical[,c(2,4,8,9,11:13,18:21,22,24:27,29:32)], factorfunction) 
-
-#replace categorical columns with factored column
-medical[,c(2,4,8,9,11:13,18:21,22,24:27,29:32)] <- factoredColumns 
-
-#delete additional columns not needed
-medical <- medical[,c(-1,-5)]
-
-
-#boxplot function to detect outliers
-b <- boxplot(medical$Children)
-b <- boxplot(medical$Age)
-b <- boxplot(medical$Income)
-b <- boxplot(medical$Soft_drink)
-b <- boxplot(medical$Overweight)
-b <- boxplot(medical$Anxiety)
-b <- boxplot(medical$Initial_days)
+hist(medical$Children,
+     main = "Histogram for Children",
+     xlab = "Children",
+     border = "green",
+     col = "blue") 
+hist(medical$Age,
+     main = "Histogram for Age",
+     xlab = "Age",
+     border = "green",
+     col = "blue")
+hist(medical$Income,
+     main = "Histogram for Income",
+     xlab = "Income",
+     border = "green",
+     col = "blue")
+hist(medical$Overweight,
+     main = "Histogram for Overweight",
+     xlab = "Overweight",
+     border = "green",
+     col = "blue")
+hist(medical$Anxiety,
+     main = "Histogram for Anxiety",
+     xlab = "Anxiety",
+     border = "green",
+     col = "blue")
+ggplot(medical, aes(x = factor(Soft_drink))) +
+  geom_bar()
 
 
-#PCA - look at PCA for all x variables. 
-medical.pca <- prcomp(medical, TRUE, TRUE) #medical = dataset True = centering variables relative
+factorfunction <- function(x) {as.numeric(as.factor(x))} #create function to change categorical columns to numeric
+
+
+factoredColumns <- sapply(medical[,c(3,6:7,9:11,16:20,22:25,27:30)], factorfunction) #apply function created above 
+#to all categorical columns
+
+
+medical[,c(3,6:7,9:11,16:20,22:25,27:30)] <- factoredColumns #replace categorical columns with factored column
+
+
+#boxplot function to detect outliers for numeric variables
+boxplot(medical$Children,medical$VitD_levels,medical$VitD_supp,medical$Full_meals_eaten,
+        names=c("Children"," VitD_levels","VitD_supp", "Full_meals_eaten")) 
+
+boxplot(medical$Population,medical$Income,
+        names=c("Population"," Income")) 
+
+medical.pca <- prcomp(medical, TRUE, TRUE) #PCA - look at PCA for all x variables. 
+#medical = dataset True = centering variables relative
 #to dataset 
 # True 2: standardizes the input data so that there is zero mean and variance in the data
 
-#print summary of above PCA function
-summary(medical.pca) 
+summary(medical.pca) #print summary of above PCA function
 
 
-#Write final dataset to csv file.
-write_csv(medical,"Users/rahmoosman/Desktop/final medical dataset.csv", append = FALSE,) 
+fviz_eig(medical.pca, choice = "eigenvalue", addlabels = TRUE) #calculate eigen values
+
+
+write_csv(medical,"Users/rahmoosman/Desktop/final medical dataset.csv", append = FALSE,) #Write final dataset to csv file.
