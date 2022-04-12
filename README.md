@@ -1,8 +1,8 @@
-- 👋 Hi, I’m @Rahmaye
-- 👀 I’m interested in Data Science, UI/UX design, Software Development
+- 👋 Hi, I’m @Rahmo
+- 👀 I’m interested in Data Science, Healthcare
 - 🌱 I’m currently learning Data Science in R
 - 💞️ I’m looking to collaborate on all of the above
-- 📫 How to reach me halimo.madobe@gmail.com
+- 📫 How to reach me rahmo.osman89@gmail.com
 
 <!---
 rosman1989/rosman1989 is a ✨ special ✨ repository because its `README.md` (this file) appears on your GitHub profile.
